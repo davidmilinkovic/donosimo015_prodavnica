@@ -1,0 +1,136 @@
+.dmCard {
+    border: 1px solid #dddddd;
+    .card-header {
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #f7f7f7;
+    }
+    .card-footer {
+        background-color: #f7f7f7;
+    }
+}
+
+.cardArtikal {
+    width: 250px;
+    margin: 10px;
+    .card-title {
+        color: black;
+    }
+
+    .card-cena {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .card-body {
+        padding: 10px;
+        .card-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: 0px;
+        }
+    }
+    .card-footer {
+        padding: 10px;
+        border-top: 1px solid #dddddd;
+    }
+}
+
+
+.cardArtikalMobilni {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    .card-title {
+        color: black;
+    }
+
+    .card-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+    }
+
+    .card-cena {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .card-body {
+        padding: 10px;
+        .card-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: 0px;
+        }
+    }
+    .card-footer {
+        padding: 0px;
+        button {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+    }
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.white {
+    color: white !important;
+}
+
+.naslovKategorije {
+    h4 {
+        font-weight: bold;
+        color: black;
+        margin-top: 0;
+    }
+
+    p {
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+    
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.dmModal {
+    padding-top: 0px;
+    .modal-header {
+        padding: 10px;
+        font-size: 16px;
+        background-color: #f7f7f7;
+
+        .modal-title{
+        font-weight: bold;
+        color: black;
+        
+        }
+    }
+    .modal-body {
+        padding: 20px;
+        label, input {
+            color: black;
+            font-weight: normal;
+            font-size: 15px;
+        }
+    }
+    .modal-footer {
+        padding: 10px;
+        background-color: #f7f7f7;
+
+    }
+}
+
+#btnNaruci {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
