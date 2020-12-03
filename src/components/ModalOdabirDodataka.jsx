@@ -56,7 +56,7 @@ export default class ModalOdabirDodataka extends Component {
               <p style={{ marginBottom: 0 }}>Izaberite dodatak</p>
             ) : (
               <p style={{ marginBottom: 0 }}>
-                Izaberite dodatke (maksimalno {polje.maksDodataka})
+                Izaberite dodatke <span hidden={polje.maksDodataka == 0}>(maksimalno {polje.maksDodataka})</span>
               </p>
             )}
           </ModalHeader>
@@ -92,7 +92,7 @@ export default class ModalOdabirDodataka extends Component {
           </ModalBody>
           <ModalFooter>
             <Button
-              color="secondary"
+              color="info"
               onClick={() => {
                 this.setState(initState);
                 zatvori();

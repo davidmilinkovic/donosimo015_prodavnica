@@ -40,7 +40,8 @@ export default class ModalNaruci extends Component {
       0
     );
     myFetch("/novaPorudzbina", "POST", body).then((res) => {
-      alert("ok");
+      this.props.toggle();
+      this.props.isprazniKorpu();
     });
   }
 
@@ -48,7 +49,7 @@ export default class ModalNaruci extends Component {
     var {mobilni} = this.props;
     return (
       <>
-        <Modal className="dmModal" isOpen={this.state.dialogMesto}>
+        <Modal scrollable className="dmModal" isOpen={this.state.dialogMesto}>
           <ModalHeader>Izaberite mesto dostave</ModalHeader>
           <ModalBody>
             {this.props.mesta.map((mesto) => (

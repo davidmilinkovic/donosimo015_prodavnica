@@ -172,7 +172,7 @@ export default class DodajUKorpu extends Component {
                         });
                       }}
                       size="sm"
-                      color="secondary"
+                      color="info"
                       style={{ height: 31 }}
                     >
                       -
@@ -185,7 +185,7 @@ export default class DodajUKorpu extends Component {
                         this.setState({ kolicina: this.state.kolicina + 1 });
                       }}
                       size="sm"
-                      color="secondary"
+                      color="info"
                       style={{ height: 31 }}
                     >
                       +
@@ -217,10 +217,9 @@ export default class DodajUKorpu extends Component {
                         </Label>
                         {polje.tip == 0 ? (
                           <Button
-                            color="secondary"
-                            outline
+                            color="info"
+                            
                             block
-                            className="text-secondary"
                             size="sm"
                             onClick={() =>
                               this.setState({ poljeZaOdabir: polje })
@@ -246,10 +245,9 @@ export default class DodajUKorpu extends Component {
                         )}
                         {polje.tip == 1 ? (
                           <Button
-                            color="secondary"
-                            outline
+                            color="info"
+                            
                             block
-                            className="text-secondary"
                             size="sm"
                             onClick={() =>
                               this.setState({ poljeZaOdabir: polje })
@@ -375,7 +373,7 @@ export default class DodajUKorpu extends Component {
 
                 <div style={{ width: "100%", display: "flex" }}>
                   <Button
-                    color="secondary"
+                    color="info"
                     style={{ marginBottom: 0, marginRight: 5, flexGrow: 1 }}
                     onClick={() => {
                       this.setState({ ...initialState });
@@ -408,7 +406,7 @@ export default class DodajUKorpu extends Component {
                   Ukupna cena: <b>{this.dajCenu()} din.</b>
                 </p>
                 <Button
-                  color="secondary"
+                  color="info"
                   style={{ marginBottom: 0 }}
                   onClick={() => {
                     this.setState({ ...initialState });

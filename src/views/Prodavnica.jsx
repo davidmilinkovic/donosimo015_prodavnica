@@ -62,7 +62,10 @@ export default class Prodavnica extends Component {
     this.setState({ korpa: JSON.parse(localStorage.getItem("korpa")) || [] });
     this.ucitaj();
     var decoded = jwt_decode(localStorage.getItem("token"));
-    this.setState({ telefon: decoded.phone_number, firebaseUID: decoded.user_id });
+    this.setState({
+      telefon: decoded.phone_number,
+      firebaseUID: decoded.user_id,
+    });
   }
 
   ucitaj = () => {
@@ -111,6 +114,11 @@ export default class Prodavnica extends Component {
     this.setState({ korpaOtvorena: false, modalNaruci: true });
   };
 
+  isprazniKorpu = () => {
+    localStorage.setItem("korpa", "[]");
+    this.setState({ korpa: [] });
+  };
+
   render() {
     var trenutnaKategorija = this.state.trenutnaKategorija;
     var { kategorije, artikli } = this.state;
@@ -144,6 +152,7 @@ export default class Prodavnica extends Component {
           mesta={this.state.mesta}
           mobilni={mobilni}
           partner={this.props.partner}
+          isprazniKorpu={this.isprazniKorpu}
         />
 
         {mobilni && korpa.length > 0 && (
@@ -161,11 +170,11 @@ export default class Prodavnica extends Component {
             <div
               onClick={() =>
                 this.setState({ korpaOtvorena: !this.state.korpaOtvorena })
-              }
+              }              
               style={{
-                backgroundColor: "#f38e2a",
                 height: 55,
                 display: "flex",
+                backgroundColor: "#212121",
                 justifyContent: "space-between",
                 alignItems: "center",
                 padding: 10,
@@ -213,7 +222,6 @@ export default class Prodavnica extends Component {
                   brisi={() => {
                     this.brisiStavkuIzKorpe(index);
                   }}
-                  
                   stavka={stavka}
                 />
               ))}
@@ -260,7 +268,7 @@ export default class Prodavnica extends Component {
             </Alert>
           </Col>
             </Row>*/}
-        <Row form style={{ margin: 0, padding: 15, }}>
+        <Row form style={{ margin: 0, padding: 15 }}>
           {velikiDesktop && (
             <Col>
               <div style={{ position: "sticky", top: 65 }}>
@@ -294,17 +302,26 @@ export default class Prodavnica extends Component {
                           spy={true}
                           smooth={true}
                           duration={500}
-                          offset={-60}
+                          offset={-56}
                           onSetActive={() =>
                             this.setState({ trenutnaKategorija: kat.naziv })
                           }
                         >
                           <ListGroupItem
                             active={trenutnaKategorija == kat.naziv}
+                            className={
+                              "" + trenutnaKategorija == kat.naziv
+                                ? "bg-info"
+                                : ""
+                            }
                             style={{
                               cursor: "pointer",
                               marginTop: 2,
                               marginBottom: 2,
+                              border:
+                                trenutnaKategorija == kat.naziv
+                                  ? "0px"
+                                  : "1px solid #dddddd",
                             }}
                           >
                             <span
@@ -358,11 +375,22 @@ export default class Prodavnica extends Component {
                   {mobilni && <br />}
                   <div className="naslovKategorije">
                     <h4>{kat.naziv}</h4>
-                    <p style={{fontWeight: "normal"}} hidden={!kat.opis || kat.opis.length == 0}>{kat.opis}</p>
+                    <p
+                      style={{ fontWeight: "normal" }}
+                      hidden={!kat.opis || kat.opis.length == 0}
+                    >
+                      {kat.opis}
+                    </p>
                   </div>
                   {mobilni && <br />}
 
-                  <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "flex-start",
+                    }}
+                  >
                     {artikli.map((art) => {
                       if (art.KategorijaArtikalaId == kat.id)
                         return desktop ? (
@@ -480,7 +508,7 @@ export default class Prodavnica extends Component {
                   <Button
                     hidden={korpa.length == 0}
                     block
-                    color="info"
+                    color="primary"
                     id="btnNaruci"
                     onClick={this.naruci}
                   >

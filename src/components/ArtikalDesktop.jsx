@@ -41,7 +41,7 @@ export default class ArtikalDesktop extends Component {
             </CardText>
           </CardBody>
           <CardFooter>
-            <Button block color="warning" onClick={this.props.dodajUKorpu}>
+            <Button block color="primary" onClick={this.props.dodajUKorpu}>
               <i className="fas fa-shopping-cart mr-2" />
               Dodaj u korpu
             </Button>

@@ -58,7 +58,7 @@ export default class StavkaKorpeDesktop extends Component {
           )}
           <p
             style={{ marginTop: 0, marginBottom: 0, fontWeight: "bold" }}
-            className="text-info"
+            className="text-primary"
           >
             {stavka.cena} din.
           </p>
