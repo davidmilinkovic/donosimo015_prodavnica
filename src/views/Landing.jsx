@@ -9,9 +9,8 @@ function Landing() {
     <>
       <div
    
-        className="page-header"     
+        className="page-header bg-info"     
         style={{
-          backgroundColor: "#180e05",
           position: "fixed",
              top: 0,
              height: "100%",
@@ -28,16 +27,16 @@ function Landing() {
             <br />
             <Button
               className="btn-round mr-1"
-              color="primary"
+              color="info"
               target="_blank"
-              outline
+              
               size="lg"
               onClick={() => {
                 localStorage.setItem("landing", true);
                 window.location.reload();
               }}
             >
-              <i className="fa fa-play mr-1" />
+              <i className="fa fa-play mr-1 text-primary" />
               Nastavi
             </Button>
             

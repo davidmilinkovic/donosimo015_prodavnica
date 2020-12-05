@@ -15,7 +15,7 @@ export default function ProdavnicaWrapper(props) {
 
   return (
     <Prodavnica
-      partner={props.partner}
+      {...props}
       velikiDesktop={velikiDesktop}
       maliDesktop={maliDesktop}
       desktop={desktop}

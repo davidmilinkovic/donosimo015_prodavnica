@@ -24,7 +24,7 @@ export default class ModalOdabirDodataka extends Component {
   };
 
   klik = (id) => {
-    var  otkaceni  = {...this.state.otkaceni};
+    var otkaceni = { ...this.state.otkaceni };
     if (!otkaceni[id]) {
       if (this.props.polje.tip == 0) otkaceni = {};
       else {
@@ -49,14 +49,17 @@ export default class ModalOdabirDodataka extends Component {
     if (polje == null) return "";
     return (
       <>
-        <Modal scrollable className="dmModal" isOpen={polje != null}>
+        <Modal fade scrollable className="dmModal" isOpen={polje != null}>
           <ModalHeader>
             <b>{polje.naziv}</b>
             {polje.tip == 0 ? (
               <p style={{ marginBottom: 0 }}>Izaberite dodatak</p>
             ) : (
               <p style={{ marginBottom: 0 }}>
-                Izaberite dodatke <span hidden={polje.maksDodataka == 0}>(maksimalno {polje.maksDodataka})</span>
+                Izaberite dodatke{" "}
+                <span hidden={polje.maksDodataka == 0}>
+                  (maksimalno {polje.maksDodataka})
+                </span>
               </p>
             )}
           </ModalHeader>
@@ -70,19 +73,23 @@ export default class ModalOdabirDodataka extends Component {
                     active={this.state.otkaceni[dod.id] != null}
                   >
                     <FormGroup check style={{ display: "inline" }}>
-                      <Label style={mobilni ? { top: 5 } : {}} check>
+                      <Label
+                        style={mobilni ? { top: 5 } : {}}
+                        check
+                      >
                         <Input
+                          onClick={(e) => {e.stopPropagation()}}
                           checked={this.state.otkaceni[dod.id] != null}
                           type="checkbox"
                           style={{ position: "inherit" }}
-                          onClick={() => this.klik(dod.id)}
                         />
                         <span className="form-check-sign">
                           <span className="check"></span>
                         </span>
                       </Label>
                     </FormGroup>
-                    <b style={{marginBottom: 5, marginTop: 0}}>{dod.naziv}</b> - {dod.cena} din.
+                    <b style={{ marginBottom: 5, marginTop: 0 }}>{dod.naziv}</b>{" "}
+                    - {dod.cena} din.
                   </ListGroupItem>
                 ) : (
                   ""
@@ -92,6 +99,7 @@ export default class ModalOdabirDodataka extends Component {
           </ModalBody>
           <ModalFooter>
             <Button
+              className="btn-round"
               color="info"
               onClick={() => {
                 this.setState(initState);
@@ -102,8 +110,9 @@ export default class ModalOdabirDodataka extends Component {
             </Button>
             <Button
               color="primary"
+              className="btn-round"
               onClick={() => {
-                this.setState({...initState});
+                this.setState({ ...initState });
                 var niz = this.props.dodaci.filter(
                   (dod) => this.state.otkaceni[dod.id] != null
                 );

@@ -40,7 +40,7 @@ export default class ArtikalMobilni extends Component {
                 <CardTitle>{data.naziv}</CardTitle>
 
                 <CardText>
-                  <div className="card-cena">Cena: {data.cena} din.</div>
+                  <div className="card-cena text-primary">Cena: {data.cena} din.</div>
                   {data.opis && data.opis.length > 0 ? (
                     <p style={{ marginBottom: 0 }}>{data.opis}</p>
                   ) : (
@@ -53,12 +53,13 @@ export default class ArtikalMobilni extends Component {
           <CardFooter>
             <Button
               block
-              color="warning"
+              color="info"
+              className="btn-round"
               size="sm"
               style={{ margin: 0 }}
               onClick={this.props.dodajUKorpu}
             >
-              <i className="fas fa-shopping-cart mr-2" />
+              <i className="fas fa-shopping-cart mr-2 text-primary" />
               Dodaj u korpu
             </Button>
           </CardFooter>

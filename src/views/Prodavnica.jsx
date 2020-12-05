@@ -36,6 +36,11 @@ import ArtikalDesktop from "components/ArtikalDesktop";
 import ArtikalMobilni from "components/ArtikalMobilni";
 import ModalNaruci from "components/ModalNaruci";
 import jwt_decode from "jwt-decode";
+import ModalHeader from "reactstrap/lib/ModalHeader";
+import ModalFooter from "reactstrap/lib/ModalFooter";
+import ModalBody from "reactstrap/lib/ModalBody";
+import Modal from "reactstrap/lib/Modal";
+import Loader from "components/Loader";
 
 const refCol1 = React.createRef();
 const refCol3 = React.createRef();
@@ -43,7 +48,7 @@ var refs = {};
 
 export default class Prodavnica extends Component {
   state = {
-    trenutnaKategorija: "inbox",
+    trenutnaKategorija: "Odabir kategorije...",
     modalKorpa: false,
     pretraga: "",
     artikalKorpa: null,
@@ -56,6 +61,8 @@ export default class Prodavnica extends Component {
     modalNaruci: false,
     telefon: "",
     firebaseUID: "",
+    modalKategorije: false,
+    progress: true
   };
 
   componentDidMount() {
@@ -75,6 +82,7 @@ export default class Prodavnica extends Component {
         kategorije: res.kategorije,
         dodaci: res.dodaci,
         mesta: res.mesta,
+        progress: false
       });
     });
   };
@@ -134,6 +142,7 @@ export default class Prodavnica extends Component {
     } = this.props;
     return (
       <>
+        <Loader loading={this.state.progress} />
         <DodajUKorpu
           otvoren={this.state.modalKorpa}
           artikal={this.state.artikalKorpa}
@@ -144,6 +153,8 @@ export default class Prodavnica extends Component {
         />
 
         <ModalNaruci
+          prikaziPorudzbinu={this.props.prikaziPorudzbinu}
+          dajPorudzbine={this.props.dajPorudzbine}
           korpa={this.state.korpa}
           telefon={this.state.telefon}
           firebaseUID={this.state.firebaseUID}
@@ -154,6 +165,73 @@ export default class Prodavnica extends Component {
           partner={this.props.partner}
           isprazniKorpu={this.isprazniKorpu}
         />
+
+        <Modal
+          fade
+          scrollable
+          className="dmModal"
+          isOpen={this.state.modalKategorije}
+        >
+          <ModalHeader>Kategorije</ModalHeader>
+          <ModalBody>
+            <ListGroup>
+              {kategorije.map((kat) => (
+                <Link
+                  activeClass="bold white"
+                  to={kat.naziv}
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                  offset={-42}
+                  onSetActive={() =>
+                    this.setState({ trenutnaKategorija: kat.naziv })
+                  }
+                >
+                  <ListGroupItem
+                    active={trenutnaKategorija == kat.naziv}
+                    className={
+                      "" + trenutnaKategorija == kat.naziv ? "bg-info" : ""
+                    }
+                    onClick={() => this.setState({ modalKategorije: false })}
+                    style={{
+                      cursor: "pointer",
+                      marginTop: 2,
+                      marginBottom: 2,
+                      border:
+                        trenutnaKategorija == kat.naziv
+                          ? "0px"
+                          : "1px solid #dddddd",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: "100%",
+                        ...(trenutnaKategorija == kat.naziv
+                          ? { color: "white", fontWeight: "bold" }
+                          : { color: "black", fontWeight: "normal" }),
+                      }}
+                    >
+                      {kat.naziv}
+                    </span>
+                    <Badge color="primary" className="pull-right">
+                      {kat.brArtikala}
+                    </Badge>
+                  </ListGroupItem>
+                </Link>
+              ))}
+            </ListGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              size="sm"
+              style={{ marginBottom: 0 }}
+              color="info"
+              onClick={() => this.setState({ modalKategorije: false })}
+            >
+              Zatvori
+            </Button>
+          </ModalFooter>
+        </Modal>
 
         {mobilni && korpa.length > 0 && (
           <SwipeableBottomSheet
@@ -170,7 +248,7 @@ export default class Prodavnica extends Component {
             <div
               onClick={() =>
                 this.setState({ korpaOtvorena: !this.state.korpaOtvorena })
-              }              
+              }
               style={{
                 height: 55,
                 display: "flex",
@@ -191,15 +269,15 @@ export default class Prodavnica extends Component {
                   padding: 0,
                 }}
               >
-                <i className="fas fa-shopping-cart mr-1" />
+                <i className="fas fa-shopping-cart mr-2" />
                 Iznos korpe:{" "}
                 <b>{korpa.reduce((prev, cur) => prev + cur.cena, 0)} din</b>
               </p>
 
               <Button
                 size="sm"
-                color="secondary"
-                className="pull-right"
+                color="primary"
+                className="pull-right btn-round"
                 style={{
                   display: "inline",
                   verticalAlign: "middle",
@@ -227,17 +305,19 @@ export default class Prodavnica extends Component {
               ))}
               <Button
                 block
-                color="info"
+                color="primary"
                 size="lg"
                 style={{
-                  margin: 0,
-                  borderRadius: 0,
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                  borderBottomLeftRadius: 0,
+                  borderBottomRightRadius: 0,
                   position: "fixed",
-                  bottom: -55,
+                  bottom: -65,
                 }}
                 onClick={this.naruci}
               >
-                <i className="fas fa-check mr-1" />
+                <i className="fas fa-check mr-2 text-primary" />
                 Naruči
               </Button>
             </div>
@@ -269,86 +349,85 @@ export default class Prodavnica extends Component {
           </Col>
             </Row>*/}
         <Row form style={{ margin: 0, padding: 15 }}>
-          {velikiDesktop && (
-            <Col>
-              <div style={{ position: "sticky", top: 65 }}>
-                <Input
-                  hidden
-                  block
-                  style={{
-                    marginBottom: 5,
-                    marginTop: 0,
-                  }}
-                  onChange={(e) => {
-                    this.setState({ pretraga: e.target.value });
-                  }}
-                  value={this.state.pretraga}
-                  placeholder="Pretraga artikala..."
-                >
-                  <i className="fas fa-search" />
-                </Input>
+          <Col hidden={!velikiDesktop}>
+            <div style={{ position: "sticky", top: 65 }}>
+              <Input
+                hidden
+                block
+                style={{
+                  marginBottom: 5,
+                  marginTop: 0,
+                }}
+                onChange={(e) => {
+                  this.setState({ pretraga: e.target.value });
+                }}
+                value={this.state.pretraga}
+                placeholder="Pretraga artikala..."
+              >
+                <i className="fas fa-search" />
+              </Input>
 
-                <Card className="dmCard">
-                  <CardHeader>
-                    <i className="fas fa-list mr-2" />
-                    Kategorije
-                  </CardHeader>
-                  <CardBody>
-                    <ListGroup>
-                      {kategorije.map((kat) => (
-                        <Link
-                          activeClass="bold white"
-                          to={kat.naziv}
-                          spy={true}
-                          smooth={true}
-                          duration={500}
-                          offset={-56}
-                          onSetActive={() =>
-                            this.setState({ trenutnaKategorija: kat.naziv })
+              <Card className="dmCard">
+                <CardHeader>
+                  <i className="fas fa-list mr-2 text-primary" />
+                  Kategorije
+                </CardHeader>
+                <CardBody>
+                  <ListGroup>
+                    {kategorije.map((kat) => (
+                      <Link
+                        activeClass="bold white"
+                        to={kat.naziv}
+                        spy={true}
+                        smooth={true}
+                        duration={500}
+                        offset={-56}
+                        onSetActive={() =>
+                          this.setState({ trenutnaKategorija: kat.naziv })
+                        }
+                      >
+                        <ListGroupItem
+                          active={trenutnaKategorija == kat.naziv}
+                          className={
+                            "" + trenutnaKategorija == kat.naziv
+                              ? "bg-info"
+                              : ""
                           }
+                          style={{
+                            cursor: "pointer",
+                            marginTop: 2,
+                            marginBottom: 2,
+                            border:
+                              trenutnaKategorija == kat.naziv
+                                ? "0px"
+                                : "1px solid #dddddd",
+                          }}
                         >
-                          <ListGroupItem
-                            active={trenutnaKategorija == kat.naziv}
-                            className={
-                              "" + trenutnaKategorija == kat.naziv
-                                ? "bg-info"
-                                : ""
-                            }
+                          <span
                             style={{
-                              cursor: "pointer",
-                              marginTop: 2,
-                              marginBottom: 2,
-                              border:
-                                trenutnaKategorija == kat.naziv
-                                  ? "0px"
-                                  : "1px solid #dddddd",
+                              width: "100%",
+                              ...(trenutnaKategorija == kat.naziv
+                                ? { color: "white", fontWeight: "bold" }
+                                : { color: "black", fontWeight: "normal" }),
                             }}
                           >
-                            <span
-                              style={{
-                                width: "100%",
-                                ...(trenutnaKategorija == kat.naziv
-                                  ? { color: "white", fontWeight: "bold" }
-                                  : { color: "black", fontWeight: "normal" }),
-                              }}
-                            >
-                              {kat.naziv}
-                            </span>
-                            <Badge className="pull-right">
-                              {kat.brArtikala}
-                            </Badge>
-                          </ListGroupItem>
-                        </Link>
-                      ))}
-                    </ListGroup>
-                  </CardBody>
-                </Card>
-              </div>
-            </Col>
-          )}
+                            {kat.naziv}
+                          </span>
+                          <Badge color="primary" className="pull-right">
+                            {kat.brArtikala}
+                          </Badge>
+                        </ListGroupItem>
+                      </Link>
+                    ))}
+                  </ListGroup>
+                </CardBody>
+              </Card>
+            </div>
+          </Col>
+
           <Col
             xs={mobilni ? 12 : velikiDesktop ? 8 : 9}
-            style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 60 }}
+            style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 55 }}
           >
             {!velikiDesktop && (
               <div style={{ position: "sticky", top: 65, zIndex: 50 }}>
@@ -367,6 +446,16 @@ export default class Prodavnica extends Component {
                 >
                   <i className="fas fa-search" />
                 </Input>
+                <Button
+                  block
+                  size="sm"
+                  color="info"
+                  onClick={() => this.setState({ modalKategorije: true })}
+                  className="btn-round"
+                  style={{ marginBottom: 0 }}
+                >
+                  {trenutnaKategorija}
+                </Button>
               </div>
             )}
             {kategorije.map((kat) => {
@@ -463,7 +552,7 @@ export default class Prodavnica extends Component {
                 className="dmCard"
               >
                 <CardHeader>
-                  <i className="fas fa-shopping-cart mr-2 text-info" />
+                  <i className="fas fa-shopping-cart mr-2 text-primary" />
                   Korpa
                 </CardHeader>
                 <CardBody style={{ padding: 0, overflowY: "auto" }}>
@@ -499,7 +588,7 @@ export default class Prodavnica extends Component {
                         }}
                       >
                         Ukupno:{" "}
-                        <span className="text-info">
+                        <span className="text-primary">
                           {korpa.reduce((prev, cur) => prev + cur.cena, 0)} din.
                         </span>
                       </p>
@@ -508,11 +597,11 @@ export default class Prodavnica extends Component {
                   <Button
                     hidden={korpa.length == 0}
                     block
-                    color="primary"
+                    color="info"
                     id="btnNaruci"
                     onClick={this.naruci}
                   >
-                    <i className="fas fa-check mr-1" />
+                    <i className="fas fa-check mr-2 text-primary" />
                     Naruči
                   </Button>
                 </CardFooter>

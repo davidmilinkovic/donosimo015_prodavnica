@@ -67,7 +67,7 @@ export default class Verifikacija extends Component {
   render() {
     return (
       <>
-        <Modal isOpen={this.state.modalKod} className="dmModal">
+        <Modal  fade isOpen={this.state.modalKod} className="dmModal">
           <ModalHeader>Unesite verifikacioni kod</ModalHeader>
           <ModalBody>
             <p style={{ fontWeight: "normal" }}>
@@ -83,13 +83,13 @@ export default class Verifikacija extends Component {
             />
           </ModalBody>
           <ModalFooter>
-            <Button block color="primary" onClick={this.verifikuj}>
-              <i className="fas fa-check mr-2" />
+            <Button block color="info" onClick={this.verifikuj} className="btn-round">
+              <i className="fas fa-check text-primary mr-2" />
               Potvrdi
             </Button>
           </ModalFooter>
         </Modal>
-        <Modal isOpen={this.state.alertGreska} className="dmModal">
+        <Modal  fade isOpen={this.state.alertGreska} className="dmModal">
           <ModalHeader>Greška</ModalHeader>
           <ModalBody>
             <p style={{ fontWeight: "normal" }}>
@@ -108,9 +108,8 @@ export default class Verifikacija extends Component {
           </ModalFooter>
         </Modal>
         <div
-          className="page-header"
+          className="page-header bg-info"
           style={{
-            backgroundColor: "#180e05",
             position: "fixed",
             top: 0,
             height: "100%",
@@ -156,12 +155,13 @@ export default class Verifikacija extends Component {
               verifikacionim kodom koji treba da unesete u sledećem koraku.
             </h5>
             <Button
-              color="primary"
-              className="mt-4 mb-4"
+              color="info"
+              className="mt-4 mb-4 btn-round"
               block
+              size="lg"
               onClick={this.potvrdi}
             >
-              <i className="fas fa-check mr-2" />
+              <i className="fas fa-check mr-2 text-primary" />
               Potvrdi
             </Button>
           </Container>

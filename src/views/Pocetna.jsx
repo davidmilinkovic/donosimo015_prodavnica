@@ -93,10 +93,10 @@ export default class Pocetna extends Component {
                     <Button
                       disabled={!partner.aktivan}
                       block
-                      className="mt-3"
-                      color="primary"
+                      className="mt-3 btn-round"
+                      color="info"
                     >
-                      <i className="fas fa-shopping-cart mr-2" /> Naruči
+                      <i className="fas fa-shopping-cart text-primary mr-2" /> Naruči
                     </Button>
                   </Link>
                 </CardBody>

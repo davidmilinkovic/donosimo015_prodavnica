@@ -66,7 +66,7 @@ export default class DodajUKorpu extends Component {
         opis += "\n";
       }
     });
-    if(this.state.napomena && this.state.napomena.length > 0)
+    if (this.state.napomena && this.state.napomena.length > 0)
       opis += "Napomena: " + this.state.napomena;
     var stavka = {
       opis,
@@ -79,7 +79,7 @@ export default class DodajUKorpu extends Component {
     localStorage.setItem("korpa", JSON.stringify(korpa));
     this.props.korpaIzmenjena();
     this.props.toggle();
-    this.setState(initialState)
+    this.setState(initialState);
   };
 
   render() {
@@ -88,7 +88,7 @@ export default class DodajUKorpu extends Component {
     return (
       <>
         <ModalOdabirDodataka
-        mobilni={mobilni}
+          mobilni={mobilni}
           dodaci={this.props.dodaci}
           otvoren={this.state.poljeZaOdabir != null}
           polje={this.state.poljeZaOdabir}
@@ -99,7 +99,12 @@ export default class DodajUKorpu extends Component {
             this.setState({ poljaVrednosti: obj });
           }}
         />
-        <Modal scrollable className="dmModal" isOpen={this.props.otvoren}>
+        <Modal
+          fade={true}
+          scrollable
+          className="dmModal"
+          isOpen={this.props.otvoren}
+        >
           <ModalHeader>Dodaj u korpu</ModalHeader>
           <ModalBody>
             <Card
@@ -112,24 +117,25 @@ export default class DodajUKorpu extends Component {
               }}
             >
               <div>
-                {mobilni &&
-                <img
-                  style={{
-                    borderRadius: 5,
-                    width: "55%",
-                    marginBottom: 10,
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    display: "block",
-                  }}
-                  src={
-                    artikal.slika != ""
-                      ? process.env.REACT_APP_SERVER +
-                        "/slike/artikli/" +
-                        artikal.slika
+                {mobilni && (
+                  <img
+                    style={{
+                      borderRadius: 5,
+                      width: "55%",
+                      marginBottom: 10,
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                      display: "block",
+                    }}
+                    src={
+                      artikal.slika != ""
+                        ? process.env.REACT_APP_SERVER +
+                          "/slike/artikli/" +
+                          artikal.slika
                         : require("../img/default.jpg")
-                      }
-                />}
+                    }
+                  />
+                )}
                 <p
                   style={{
                     marginTop: 4,
@@ -173,7 +179,7 @@ export default class DodajUKorpu extends Component {
                       }}
                       size="sm"
                       color="info"
-                      style={{ height: 31 }}
+                      style={{ height: 32 }}
                     >
                       -
                     </Button>
@@ -186,7 +192,7 @@ export default class DodajUKorpu extends Component {
                       }}
                       size="sm"
                       color="info"
-                      style={{ height: 31 }}
+                      style={{ height: 32 }}
                     >
                       +
                     </Button>
@@ -218,7 +224,7 @@ export default class DodajUKorpu extends Component {
                         {polje.tip == 0 ? (
                           <Button
                             color="info"
-                            
+                            className="btn-round"
                             block
                             size="sm"
                             onClick={() =>
@@ -246,7 +252,7 @@ export default class DodajUKorpu extends Component {
                         {polje.tip == 1 ? (
                           <Button
                             color="info"
-                            
+                            className="btn-round"
                             block
                             size="sm"
                             onClick={() =>
@@ -258,7 +264,11 @@ export default class DodajUKorpu extends Component {
                               <>
                                 <i className="fas fa-list mr-2" />
                                 Izaberite
-                                {polje.maksDodataka ? <span>(max. {polje.maksDodataka})</span> : ""}
+                                {polje.maksDodataka ? (
+                                  <span>(max. {polje.maksDodataka})</span>
+                                ) : (
+                                  ""
+                                )}
                               </>
                             ) : (
                               this.state.poljaVrednosti[polje.id].map(
@@ -373,6 +383,7 @@ export default class DodajUKorpu extends Component {
 
                 <div style={{ width: "100%", display: "flex" }}>
                   <Button
+                    className="btn-round"
                     color="info"
                     style={{ marginBottom: 0, marginRight: 5, flexGrow: 1 }}
                     onClick={() => {
@@ -383,6 +394,7 @@ export default class DodajUKorpu extends Component {
                     Zatvori
                   </Button>
                   <Button
+                    className="btn-round"
                     style={{ marginBottom: 0, marginLeft: 5, flexGrow: 1 }}
                     color="primary"
                     onClick={this.dodaj}
@@ -406,6 +418,7 @@ export default class DodajUKorpu extends Component {
                   Ukupna cena: <b>{this.dajCenu()} din.</b>
                 </p>
                 <Button
+                  className="btn-round"
                   color="info"
                   style={{ marginBottom: 0 }}
                   onClick={() => {
@@ -416,6 +429,7 @@ export default class DodajUKorpu extends Component {
                   Zatvori
                 </Button>
                 <Button
+                  className="btn-round"
                   style={{ marginBottom: 0 }}
                   color="primary"
                   onClick={this.dodaj}

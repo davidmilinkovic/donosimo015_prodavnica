@@ -32,7 +32,7 @@ export default class ArtikalDesktop extends Component {
             <CardTitle>{data.naziv}</CardTitle>
 
             <CardText>
-              <div className="card-cena">Cena: {data.cena} din.</div>
+              <div className="card-cena">Cena: <span className="text-primary">{data.cena} din.</span></div>
               {data.opis && data.opis.length > 0 ? (
                 <p style={{ marginBottom: 0 }}>{data.opis}</p>
               ) : (
@@ -41,8 +41,8 @@ export default class ArtikalDesktop extends Component {
             </CardText>
           </CardBody>
           <CardFooter>
-            <Button block color="primary" onClick={this.props.dodajUKorpu}>
-              <i className="fas fa-shopping-cart mr-2" />
+            <Button block color="info" className="btn-round" onClick={this.props.dodajUKorpu}>
+              <i className="fas text-primary fa-shopping-cart mr-2" />
               Dodaj u korpu
             </Button>
           </CardFooter>

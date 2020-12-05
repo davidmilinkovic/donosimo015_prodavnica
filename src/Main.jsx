@@ -25,6 +25,7 @@ import {
   SquareLoader,
   SyncLoader,
 } from "react-spinners";
+import ModalPrikazPorudzbine from "components/ModalPrikazPorudzbine";
 
 var hist = createBrowserHistory();
 
@@ -35,7 +36,7 @@ var statusi = [
   "Dostavlja se", // 3
   "Dostavljena", // 4
   "Odbijena", // 5
-  "Otkazana", // 6
+  "Odbijena", // 6 - ovo je zapravo otkazana, ali korisniku je ekvivalentno
   "Zakazana", // 7
 ];
 
@@ -45,27 +46,46 @@ var bojeStatusa = [
   "#ea4c89",
   "#4CD964",
   "#4CD964",
-  "#d5000",
-  "#d5000",
-  "#262626",
+  "#d50000",
+  "#d50000",
+  "#4CD964",
 ];
+
+var refModalPrikaz = React.createRef();
 
 export default class Main extends Component {
   state = {
     partneri: [],
     porudzbine: [],
+    porudzbinaZaPrikaz: null,
   };
 
   dajPartnere = () => {
     myFetch("/partneri").then((res) => {
-      this.setState({ partneri: res.result });
+      var partneri = res.result;
+
+      this.setState({ partneri });
     });
   };
 
-  dajPorudzbine = () => {
+  dajPorudzbine = (timeout = true) => {
+    if (timeout) setTimeout(this.dajPorudzbine, 5000);
+
     myFetch("/aktivnePorudzbine").then((res) => {
-      setTimeout(this.dajPorudzbine, 1000);
-      this.setState({ porudzbine: res.result });
+      var porudzbine = res.result;
+
+      for (var i = 0; i < porudzbine.length; i++) {
+        porudzbine[i].odbijena =
+          porudzbine[i].status == 5 || porudzbine[i].status == 6;
+        porudzbine[i].potvrdjena =
+          porudzbine[i].odgovorCentrala != null && porudzbine[i].status != 0;
+        if (this.state.porudzbinaZaPrikaz != null) {
+          if (porudzbine[i].id == this.state.porudzbinaZaPrikaz.id) {
+            this.setState({ porudzbinaZaPrikaz: porudzbine[i] });
+          }
+        }
+      }
+      this.setState({ porudzbine });
     });
   };
 
@@ -74,11 +94,24 @@ export default class Main extends Component {
     this.dajPorudzbine();
   }
 
+  prikaziPorudzbinu = (por) => {
+    this.setState({ porudzbinaZaPrikaz: por }, () =>
+      refModalPrikaz.current.otvori()
+    );
+  };
+
   render() {
     return (
       <div>
+        <ModalPrikazPorudzbine
+          dajPorudzbine={this.dajPorudzbine}
+          statusi={statusi}
+          bojeStatusa={bojeStatusa}
+          ref={refModalPrikaz}
+          porudzbina={this.state.porudzbinaZaPrikaz}
+        />
         <Router history={hist}>
-          <div            
+          <div
             style={{
               height: 55,
               width: "100%",
@@ -94,7 +127,7 @@ export default class Main extends Component {
               justifyContent: "space-between",
             }}
           >
-            <Link to="/">
+            <Link to="/" onClick={() => hist.replace("/")}>
               <div
                 style={{
                   marginLeft: 10,
@@ -102,7 +135,10 @@ export default class Main extends Component {
                   alignItems: "center",
                 }}
               >
-                <img src={require("img/korpica.png")} style={{ height: 0 }} />
+                <img
+                  src={require("img/donosimo_mala.png")}
+                  style={{ height: 40 }}
+                />
                 <h4
                   style={{
                     display: "inline",
@@ -144,7 +180,7 @@ export default class Main extends Component {
                         backgroundColor: "#e3e3e3",
                         position: "sticky",
                         top: 55,
-                        zIndex: 40,
+                        zIndex: 55,
                       }}
                     >
                       {this.state.porudzbine.map((por) => (
@@ -161,29 +197,30 @@ export default class Main extends Component {
                             <div
                               style={{ display: "flex", alignItems: "center" }}
                             >
-                              {por.status == 0 && (
-                                <RingLoader
-                                  color={bojeStatusa[por.status]}
-                                  size={30}
-                                />
+                              {!por.potvrdjena && !por.odbijena && (
+                                <RingLoader color={bojeStatusa[0]} size={30} />
                               )}
-                              {por.status == 1 && (
-                                <HashLoader
-                                  color={bojeStatusa[por.status]}
-                                  size={30}
-                                />
-                              )}
-                              {por.status == 2 && (
-                                <SyncLoader
-                                  color={bojeStatusa[por.status]}
-                                  size={6}
-                                />
-                              )}
-                              {por.status == 3 && (
-                                <DotLoader
-                                  color={bojeStatusa[por.status]}
-                                  size={30}
-                                />
+                              {por.potvrdjena && !por.odbijena && (
+                                <>
+                                  {por.status == 1 && (
+                                    <HashLoader
+                                      color={bojeStatusa[por.status]}
+                                      size={30}
+                                    />
+                                  )}
+                                  {por.status == 2 && (
+                                    <SyncLoader
+                                      color={bojeStatusa[por.status]}
+                                      size={6}
+                                    />
+                                  )}
+                                  {por.status == 3 && (
+                                    <DotLoader
+                                      color={bojeStatusa[por.status]}
+                                      size={30}
+                                    />
+                                  )}
+                                </>
                               )}
                               <div style={{ paddingLeft: 10 }}>
                                 <h5
@@ -200,10 +237,21 @@ export default class Main extends Component {
                                     fontWeight: "bold",
                                     fontSize: 12,
                                     marginBottom: 0,
-                                    color: bojeStatusa[por.status],
+                                    color:
+                                      bojeStatusa[
+                                        por.potvrdjena || por.odbijena
+                                          ? por.status
+                                          : 0
+                                      ],
                                   }}
                                 >
-                                  {statusi[por.status]}
+                                  {
+                                    statusi[
+                                      por.potvrdjena || por.odbijena
+                                        ? por.status
+                                        : 0
+                                    ]
+                                  }
                                 </p>
                               </div>
                             </div>
@@ -211,12 +259,13 @@ export default class Main extends Component {
                               style={{
                                 marginBottom: 0,
                                 fontSize: 12,
-                                padding: 3,
                               }}
-                              color="primary"
+                              color="info"
                               size="sm"
+                              className="btn-round"
+                              onClick={() => this.prikaziPorudzbinu(por)}
                             >
-                              <i className="fas fa-list mr-1" />
+                              <i className="fas fa-list mr-1  text-primary" />
                               Prikaži
                             </Button>
                           </div>
@@ -228,11 +277,20 @@ export default class Main extends Component {
                 <div>
                   <Switch>
                     <Route path="/" exact>
-                      <Pocetna partneri={this.state.partneri} />
+                      <Pocetna hist={hist} partneri={this.state.partneri} />
                     </Route>
                     {this.state.partneri.map((p) => (
                       <Route path={"/" + p.naziv}>
-                        <ProdavnicaWrapper partner={p} />
+                        <ProdavnicaWrapper
+                    dajPorudzbine={this.dajPorudzbine}
+
+                          prikaziPorudzbinu={(por) => {
+                            this.setState({ porudzbinaZaPrikaz: por }, () =>
+                              refModalPrikaz.current.otvori()
+                            );
+                          }}
+                          partner={p}
+                        />
                       </Route>
                     ))}
                   </Switch>
@@ -253,7 +311,7 @@ export default class Main extends Component {
                 position: "fixed",
                 display: "flex",
                 alignItems: "flex-end",
-                zIndex: 5600,
+                zIndex: 50,
                 bottom: 20,
                 right: 20,
                 margin: 0,
@@ -261,16 +319,16 @@ export default class Main extends Component {
             >
               {this.state.porudzbine.map((por) => (
                 <Card
-                  style={{ backgroundColor: "#f7f7f7" }}
                   body
                   className="dmCard"
                   style={{
                     margin: 0,
                     marginLeft: 10,
+                    backgroundColor: "#e3e3e3",
                     marginRight: 10,
                     display: "flex",
                     flexDirection: "column",
-                    alignItems: "center",                    
+                    alignItems: "center",
                   }}
                 >
                   <img
@@ -284,19 +342,32 @@ export default class Main extends Component {
                         : require("img/default.jpg")
                     }
                   />
-                  {por.status == 0 && (
-                    <RingLoader color={bojeStatusa[por.status]} size={100} />
+                  {!por.potvrdjena && !por.odbijena && (
+                    <RingLoader color={bojeStatusa[0]} size={100} />
                   )}
-                  {por.status == 1 && (
-                    <HashLoader color={bojeStatusa[por.status]} size={100} />
+                  {por.potvrdjena && !por.odbijena && (
+                    <>
+                      {por.status == 1 && (
+                        <HashLoader
+                          color={bojeStatusa[por.status]}
+                          size={100}
+                        />
+                      )}
+                      {por.status == 2 && (
+                        <SyncLoader color={bojeStatusa[por.status]} size={20} />
+                      )}
+                      {por.status == 3 && (
+                        <DotLoader color={bojeStatusa[por.status]} size={100} />
+                      )}
+                    </>
                   )}
-                  {por.status == 2 && (
-                    <SyncLoader color={bojeStatusa[por.status]} size={20} />
-                  )}
-                  {por.status == 3 && (
-                    <DotLoader color={bojeStatusa[por.status]} size={100} />
-                  )}
-                  <h5 style={{ fontWeight: "normal", marginBottom: 0, marginTop: 15 }}>
+                  <h5
+                    style={{
+                      fontWeight: "normal",
+                      marginBottom: 0,
+                      marginTop: 15,
+                    }}
+                  >
                     Porudžbina iz <b>{por.partnerString}</b>
                   </h5>
                   <h6
@@ -304,13 +375,21 @@ export default class Main extends Component {
                       fontSize: 14,
                       marginTop: 5,
                       marginBottom: 15,
-                      color: bojeStatusa[por.status],
+                      color:
+                        bojeStatusa[
+                          por.potvrdjena || por.odbijena ? por.status : 0
+                        ],
                     }}
                   >
-                    {statusi[por.status]}{" "}
+                    {statusi[por.potvrdjena || por.odbijena ? por.status : 0]}{" "}
                   </h6>
-                  <Button block className="btn-round" color="primary">
-                    <i className="fas fa-list mr-2" />
+                  <Button
+                    block
+                    className="btn-round"
+                    color="info"
+                    onClick={() => this.prikaziPorudzbinu(por)}
+                  >
+                    <i className="fas fa-list mr-2 text-primary" />
                     Prikaži porudžbinu
                   </Button>
                 </Card>
