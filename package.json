@@ -32,7 +32,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "firebase deploy --only hosting:donosimo015prodavnica",
+    "deploy_old": "firebase deploy --only hosting:donosimo015prodavnica",
+    "deploy": "bash deploy.sh",
     "bad": "npm run build && npm run deploy",
     "badTest": "npm run buildTest && npm run deployTest",
     "test": "react-scripts test",

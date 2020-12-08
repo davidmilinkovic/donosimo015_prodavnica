@@ -11,9 +11,9 @@
 }
 
 .cardArtikal {
-    width: 250px;
     margin: 10px;
     border: 1px solid #e3e3e3;
+    flex: 1 0 250px;
     .card-title {
         color: black;
     }
@@ -134,4 +134,18 @@
     border-top-right-radius: 0;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+}
+
+
+#artikliFlex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.artikliFlexHidden {
+    content: "";
+    flex: 1 0 250px;
+    margin: 10px;
+    visibility: hidden;
 }

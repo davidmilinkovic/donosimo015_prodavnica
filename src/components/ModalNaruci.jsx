@@ -211,6 +211,7 @@ export default class ModalNaruci extends Component {
                     <Input
                       type="textarea"
                       name="Napomena"
+                      rows="5"
                       id="Napomena"
                       placeholder="Unesite napomene u vezi sa porudžbinom..."
                       onChange={(e) =>

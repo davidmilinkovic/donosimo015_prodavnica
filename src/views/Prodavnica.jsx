@@ -62,7 +62,7 @@ export default class Prodavnica extends Component {
     telefon: "",
     firebaseUID: "",
     modalKategorije: false,
-    progress: true
+    progress: true,
   };
 
   componentDidMount() {
@@ -82,7 +82,7 @@ export default class Prodavnica extends Component {
         kategorije: res.kategorije,
         dodaci: res.dodaci,
         mesta: res.mesta,
-        progress: false
+        progress: false,
       });
     });
   };
@@ -305,7 +305,7 @@ export default class Prodavnica extends Component {
               ))}
               <Button
                 block
-                color="primary"
+                color="info"
                 size="lg"
                 style={{
                   borderTopLeftRadius: 20,
@@ -473,13 +473,7 @@ export default class Prodavnica extends Component {
                   </div>
                   {mobilni && <br />}
 
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      alignItems: "flex-start",
-                    }}
-                  >
+                  <div id="artikliFlex">
                     {artikli.map((art) => {
                       if (art.KategorijaArtikalaId == kat.id)
                         return desktop ? (
@@ -505,6 +499,16 @@ export default class Prodavnica extends Component {
                         );
                       return "";
                     })}
+                    {desktop && (
+                      <>
+                        <div className="artikliFlexHidden" />
+                        <div className="artikliFlexHidden" />
+                        <div className="artikliFlexHidden" />
+                        <div className="artikliFlexHidden" />
+                        <div className="artikliFlexHidden" />
+                        <div className="artikliFlexHidden" />
+                      </>
+                    )}
                   </div>
                 </Element>
               );

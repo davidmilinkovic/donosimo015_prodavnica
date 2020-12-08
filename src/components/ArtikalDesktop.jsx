@@ -20,7 +20,6 @@ export default class ArtikalDesktop extends Component {
         <Card className="dmCard cardArtikal">
           <CardImg
             top
-            width="400"
             src={
               data.slika != ""
                 ? process.env.REACT_APP_SERVER + "/slike/artikli/" + data.slika
