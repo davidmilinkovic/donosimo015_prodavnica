@@ -1,5 +1,6 @@
 import myFetch from "myFetch";
 import React, { Component } from "react";
+import Moment from "react-moment";
 import Button from "reactstrap/lib/Button";
 import Card from "reactstrap/lib/Card";
 import CardBody from "reactstrap/lib/CardBody";
@@ -8,6 +9,7 @@ import Col from "reactstrap/lib/Col";
 import Form from "reactstrap/lib/Form";
 import FormGroup from "reactstrap/lib/FormGroup";
 import Input from "reactstrap/lib/Input";
+import InputGroup from "reactstrap/lib/InputGroup";
 import Label from "reactstrap/lib/Label";
 import Modal from "reactstrap/lib/Modal";
 import ModalBody from "reactstrap/lib/ModalBody";
@@ -15,6 +17,22 @@ import ModalFooter from "reactstrap/lib/ModalFooter";
 import ModalHeader from "reactstrap/lib/ModalHeader";
 import Row from "reactstrap/lib/Row";
 import StavkaKorpeDesktop from "./StavkaKorpeDesktop";
+import moment from "moment";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+const CustomInput = ({ value, onClick, color }) => (
+  <Button
+    size="sm"
+    block
+    color={color}
+    style={{ width: "100%" }}
+    className="btn-round"
+    onClick={onClick}
+  >
+    {value}
+  </Button>
+);
 
 export default class ModalNaruci extends Component {
   state = {
@@ -24,11 +42,20 @@ export default class ModalNaruci extends Component {
     adresa: "",
     invalid: false,
     napomena: "",
-    modalPartnerNeaktivan: false
+    modalPartnerNeaktivan: false,
+    modalZakazi: false,
+    zakazanaZaDatum: new Date(),
+    zakazanaZa: new Date(),
+    zakazanaAktiv: null,
+  };
+
+  validacija = () => {
+    var invalid = this.state.mesto == null || this.state.adresa.length == 0;
+    return invalid;
   };
 
   naruci = () => {
-    var invalid = this.state.mesto == null || this.state.adresa.length == 0;
+    var invalid = this.validacija();
     this.setState({ invalid });
     if (invalid) return;
     var body = {};
@@ -59,6 +86,47 @@ export default class ModalNaruci extends Component {
     });
   };
 
+  zakazi = () => {
+    var { zakazanaZa, zakazanaZaDatum } = this.state;
+    zakazanaZa.setDate(zakazanaZaDatum.getDate());
+    zakazanaZa.setMonth(zakazanaZaDatum.getMonth());
+    zakazanaZa.setFullYear(zakazanaZaDatum.getFullYear());
+
+    var zakazanaAktiv = new Date(zakazanaZa);
+    zakazanaAktiv.setMinutes(zakazanaAktiv.getMinutes() - 45);
+
+    alert(zakazanaZa);
+    alert(zakazanaAktiv);
+
+    var body = {};
+    body.ime = this.state.ime;
+    body.adresa = this.state.adresa;
+    body.telefon = this.props.telefon;
+    body.firebaseUID = this.props.firebaseUID;
+    body.napomena = this.state.napomena;
+    body.status = 7;
+    body.PartnerId = this.props.partner.id;
+    body.stavke = this.props.korpa;
+    body.partnerString = this.props.partner.naziv;
+    body.MestoId = this.state.mesto.id;
+    body.cenaDostave = this.state.mesto.Zona.cena;
+    body.cenaPorudzbine = this.props.korpa.reduce(
+      (prev, cur) => prev + cur.cena,
+      0
+    );
+    body.zakazanaZa = zakazanaZa;
+    body.zakazanaAktiv = zakazanaAktiv
+    myFetch("/novaPorudzbina", "POST", body).then((res) => {
+      if (res.partnerNeaktivan) {
+        this.setState({ modalPartnerNeaktivan: true });
+      } else {
+        this.props.isprazniKorpu();
+        this.props.dajPorudzbine(false);
+        this.props.prikaziPorudzbinu(res.porudzbina);
+      }
+      this.props.toggle();
+    });
+  };
   render() {
     var { mobilni } = this.props;
     return (
@@ -93,7 +161,64 @@ export default class ModalNaruci extends Component {
             </Button>
           </ModalFooter>
         </Modal>
-        
+        <Modal isOpen={this.state.modalZakazi} className="dmModal">
+          <ModalHeader>Zakazivanje porudžbine</ModalHeader>
+          <ModalBody style={{ fontSize: 15, fontWeight: "normal" }}>
+            <p style={{ fontWeight: "normal" }}>
+              Odaberite datum i vreme kada želite da Vam porudžbina bude
+              dostavljena.
+            </p>
+            <hr />
+            <p style={{ fontWeight: "normal", marginBottom: 5 }}>
+              <i className="fas fa-calendar mr-1 text-primary" />
+              Datum:
+            </p>
+
+            <ReactDatePicker
+              selected={this.state.zakazanaZaDatum}
+              onChange={(d) => this.setState({ zakazanaZaDatum: d })}
+              customInput={<CustomInput color="info" />}
+              wrapperClassName="block"
+              className="block"
+              dateFormat="dd.MM.yyyy"
+            />
+            <p style={{ fontWeight: "normal", marginBottom: 5, marginTop: 10 }}>
+              <i className="fas fa-clock mr-1 text-primary" />
+              Vreme:
+            </p>
+            <ReactDatePicker
+              selected={this.state.zakazanaZa}
+              showTimeSelectOnly
+              showTimeSelect
+              wrapperClassName="block"
+              className="block"
+              customInput={<CustomInput color="info" />}
+              onChange={(d) => this.setState({ zakazanaZa: d })}
+              dateFormat="HH:mm"
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              className="btn-round mb-0"
+              color="info"
+              onClick={() => this.setState({ modalZakazi: false })}
+            >
+              Zatvori
+            </Button>
+            <Button
+              className="btn-round mb-0"
+              color="primary"
+              onClick={() => {
+                this.setState({ modalZakazi: false });
+                this.zakazi();
+              }}
+            >
+              <i className="fas fa-check mr-1" />
+              Naruči
+            </Button>
+          </ModalFooter>
+        </Modal>
+
         <Modal
           fade
           scrollable
@@ -358,18 +483,53 @@ export default class ModalNaruci extends Component {
               </Button>
               <Button
                 style={{
-                  marginLeft: 5,
+                  marginRight: mobilni ? 0 : 5,
                   marginBottom: 0,
                   flexGrow: mobilni ? 1 : 0,
                 }}
+                color="success"
+                className="btn-round"
+                onClick={this.props.toggle}
+                onClick={() => {
+                  var invalid = this.validacija();
+                  this.setState({ invalid });
+                  if (invalid) return;
+                  this.setState({ modalZakazi: true });
+                }}
+              >
+                <i className="fas fa-clock mr-2" />
+                Zakaži
+              </Button>
+              {!mobilni && (
+                <Button
+                  style={{
+                    marginBottom: 0,
+                    flexGrow: 0,
+                  }}
+                  color="primary"
+                  className="btn-round"
+                  onClick={this.naruci}
+                >
+                  <i className="fas fa-check mr-2" />
+                  Naruči
+                </Button>
+              )}
+            </div>
+            {mobilni && (
+              <Button
+                style={{
+                  marginBottom: 0,
+                  marginTop: 5,
+                }}
                 color="primary"
+                block
                 className="btn-round"
                 onClick={this.naruci}
               >
                 <i className="fas fa-check mr-2" />
                 Naruči
               </Button>
-            </div>
+            )}
           </ModalFooter>
         </Modal>
       </>

@@ -1,7 +1,7 @@
 import myFetch from "myFetch";
 import React, { Component } from "react";
 import Moment from "react-moment";
-import { DotLoader, HashLoader, RingLoader, SyncLoader } from "react-spinners";
+import { ClockLoader, DotLoader, HashLoader, RingLoader, SyncLoader } from "react-spinners";
 import Button from "reactstrap/lib/Button";
 import Card from "reactstrap/lib/Card";
 import CardBody from "reactstrap/lib/CardBody";
@@ -23,9 +23,11 @@ export default class ModalPrikazPorudzbine extends Component {
     this.setState({ otvoren: false });
   };
 
-  izbrisiOdbijenu = () => {
+  izbrisiOtkazanu = () => {
     this.setState({ otvoren: false });
-    myFetch("/izbrisi/", "POST", { id: this.props.porudzbina.id }).then(() => this.props.dajPorudzbine(false));
+    myFetch("/izbrisi/", "POST", { id: this.props.porudzbina.id }).then(() =>
+      this.props.dajPorudzbine(false)
+    );
   };
 
   render() {
@@ -56,13 +58,13 @@ export default class ModalPrikazPorudzbine extends Component {
                   <b style={{ color: "#d50000" }}>odbijena</b>
                 </h5>
                 <h5 style={{ fontWeight: "normal", fontSize: 18 }}>
-                  Razlog odbijanja: <b>{por.razlogOdbijanja}</b>
+                  Razlog odbijanja: <b>{por.razlogOtkazivanja}</b>
                 </h5>
                 <Button
                   className="btn-round"
                   block
                   color="info"
-                  onClick={this.izbrisiOdbijenu}
+                  onClick={this.izbrisiOtkazanu}
                 >
                   <i className="fas fa-trash mr-1 text-primary"></i>
                   Izbriši
@@ -71,11 +73,26 @@ export default class ModalPrikazPorudzbine extends Component {
             )}
             {!por.odbijena && (
               <>
-                {!por.potvrdjena && (
+                {por.status == 7 ? (
                   <>
                     <h5 style={{ fontWeight: "normal", fontSize: 20 }}>
-                      Čeka se potvrda porudžbine...
+                      Porudžbina je zakazana
                     </h5>
+                    {
+                      <h5
+                        align="center"
+                        style={{ fontWeight: "normal", fontSize: 15 }}
+                      >
+                        <span>
+                          Datum i vreme zakazivanja:{" "}
+                          <b>
+                            <Moment format="DD.MM.YYYY. hh:mm">
+                              {por.zakazanaZa}
+                            </Moment>
+                          </b>
+                        </span>
+                      </h5>
+                    }
                     <Card
                       body
                       style={{
@@ -88,75 +105,132 @@ export default class ModalPrikazPorudzbine extends Component {
                         alignItems: "center",
                       }}
                     >
-                      <RingLoader
+                      <ClockLoader
                         css={{ margin: 20 }}
-                        color={bojeStatusa[0]}
+                        color={bojeStatusa[7]}
                         size={100}
                       />
                     </Card>
                   </>
-                )}
-                {por.potvrdjena && (
+                ) : (
                   <>
-                    {por.status != 4 && (
+                    {!por.potvrdjena && (
                       <>
-                        <h5
-                          align="center"
-                          style={{ fontWeight: "normal", fontSize: 20 }}
-                        >
-                          Narudžbina je potvrđena:{" "}
-                          <b>{(por.odgovorCentrala + por.odgovor) / 60} minuta</b>
+                        <h5 style={{ fontWeight: "normal", fontSize: 20 }}>
+                          Porudžbina se obrađuje...
                         </h5>
-                        <h5
-                          align="center"
-                          style={{ fontWeight: "normal", fontSize: 15 }}
+                        {
+                          <h5
+                            align="center"
+                            style={{ fontWeight: "normal", fontSize: 15 }}
+                          >
+                            {por.odgovor != null ? (
+                              <span>
+                                <b>{por.partnerString}</b> je prihvatio Vašu
+                                porudžbinu. Pronalazimo dostavljača za Vas...
+                              </span>
+                            ) : (
+                              <span>
+                                Čeka se potvrda od <b>{por.partnerString}</b>...
+                              </span>
+                            )}
+                          </h5>
+                        }
+                        <Card
+                          body
+                          style={{
+                            backgroundColor: "#e3e3e3",
+                            width: "100%",
+                            marginBottom: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
                         >
-                          Vreme potvrde: <b><Moment format="HH:mm">{por.vremePotvrdjena}</Moment></b>
-                        </h5>
+                          <RingLoader
+                            css={{ margin: 20 }}
+                            color={bojeStatusa[0]}
+                            size={100}
+                          />
+                        </Card>
                       </>
                     )}
-                    <Card
-                      body
-                      style={{
-                        backgroundColor: "#e3e3e3",
-                        width: "100%",
-                        marginBottom: 0,
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      {por.status == 1 && (
-                        <HashLoader
-                          color={bojeStatusa[por.status]}
-                          size={100}
-                          css={{ marginTop: 15, marginBottom: 15 }}
-                        />
-                      )}
-                      {por.status == 2 && (
-                        <SyncLoader
-                          color={bojeStatusa[por.status]}
-                          size={20}
-                          css={{ marginTop: 10, marginBottom: 10 }}
-                        />
-                      )}
-                      {por.status == 3 && (
-                        <DotLoader
-                          color={bojeStatusa[por.status]}
-                          size={100}
-                          css={{ marginTop: 10, marginBottom: 10 }}
-                        />
-                      )}
+                    {por.potvrdjena && (
+                      <>
+                        {por.status != 4 && (
+                          <>
+                            <h5
+                              align="center"
+                              style={{ fontWeight: "normal", fontSize: 20 }}
+                            >
+                              Narudžbina je potvrđena:{" "}
+                              <b>
+                                {(Math.max(por.vremeDoPartnera, por.odgovor) +
+                                  por.vremeDostave) /
+                                  60}{" "}
+                                minuta
+                              </b>
+                            </h5>
+                            <h5
+                              align="center"
+                              style={{ fontWeight: "normal", fontSize: 15 }}
+                            >
+                              Vreme potvrde:{" "}
+                              <b>
+                                <Moment format="HH:mm">
+                                  {por.vremePotvrdjena}
+                                </Moment>
+                              </b>
+                            </h5>
+                          </>
+                        )}
+                        <Card
+                          body
+                          style={{
+                            backgroundColor: "#e3e3e3",
+                            width: "100%",
+                            marginBottom: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          {por.status == 1 && (
+                            <HashLoader
+                              color={bojeStatusa[por.status]}
+                              size={100}
+                              css={{ marginTop: 15, marginBottom: 15 }}
+                            />
+                          )}
+                          {por.status == 2 && (
+                            <SyncLoader
+                              color={bojeStatusa[por.status]}
+                              size={20}
+                              css={{ marginTop: 10, marginBottom: 10 }}
+                            />
+                          )}
+                          {por.status == 3 && (
+                            <DotLoader
+                              color={bojeStatusa[por.status]}
+                              size={100}
+                              css={{ marginTop: 10, marginBottom: 10 }}
+                            />
+                          )}
 
-                      <h6 style={{ fontSize: 16 }}>Status porudžbine:</h6>
-                      <h6
-                        style={{ color: bojeStatusa[por.status], fontSize: 16 }}
-                      >
-                        {statusi[por.status]}
-                      </h6>
-                      
-                    </Card>
+                          <h6 style={{ fontSize: 16 }}>Status porudžbine:</h6>
+                          <h6
+                            style={{
+                              color: bojeStatusa[por.status],
+                              fontSize: 16,
+                            }}
+                          >
+                            {statusi[por.status]}
+                          </h6>
+                        </Card>
+                      </>
+                    )}
                   </>
                 )}
               </>

@@ -30,13 +30,13 @@ import ModalPrikazPorudzbine from "components/ModalPrikazPorudzbine";
 var hist = createBrowserHistory();
 
 var statusi = [
-  "Čeka se potvrda", // 0
+  "Obrađuje se", // 0
   "U pripremi", // 1
   "Čeka se preuzimanje", // 2
   "Dostavlja se", // 3
   "Dostavljena", // 4
-  "Odbijena", // 5
-  "Odbijena", // 6 - ovo je zapravo otkazana, ali korisniku je ekvivalentno
+  "",
+  "Odbijena", // 6 - ovo je zapravo otkazana, ali korisniku je lepše prikazati ovako
   "Zakazana", // 7
 ];
 
@@ -75,10 +75,9 @@ export default class Main extends Component {
       var porudzbine = res.result;
 
       for (var i = 0; i < porudzbine.length; i++) {
-        porudzbine[i].odbijena =
-          porudzbine[i].status == 5 || porudzbine[i].status == 6;
+        porudzbine[i].odbijena = porudzbine[i].status == 6; // loodilo
         porudzbine[i].potvrdjena =
-          porudzbine[i].odgovorCentrala != null && porudzbine[i].status != 0;
+          porudzbine[i].VozacId != null && porudzbine[i].status != 0;
         if (this.state.porudzbinaZaPrikaz != null) {
           if (porudzbine[i].id == this.state.porudzbinaZaPrikaz.id) {
             this.setState({ porudzbinaZaPrikaz: porudzbine[i] });
@@ -197,28 +196,37 @@ export default class Main extends Component {
                             <div
                               style={{ display: "flex", alignItems: "center" }}
                             >
-                              {!por.potvrdjena && !por.odbijena && (
-                                <RingLoader color={bojeStatusa[0]} size={30} />
-                              )}
-                              {por.potvrdjena && !por.odbijena && (
+                              {por.status == 7 ? (
+                                <ClockLoader color={bojeStatusa[7]} size={30} />
+                              ) : (
                                 <>
-                                  {por.status == 1 && (
-                                    <HashLoader
-                                      color={bojeStatusa[por.status]}
+                                  {!por.potvrdjena && !por.odbijena && (
+                                    <RingLoader
+                                      color={bojeStatusa[0]}
                                       size={30}
                                     />
                                   )}
-                                  {por.status == 2 && (
-                                    <SyncLoader
-                                      color={bojeStatusa[por.status]}
-                                      size={6}
-                                    />
-                                  )}
-                                  {por.status == 3 && (
-                                    <DotLoader
-                                      color={bojeStatusa[por.status]}
-                                      size={30}
-                                    />
+                                  {por.potvrdjena && !por.odbijena && (
+                                    <>
+                                      {por.status == 1 && (
+                                        <HashLoader
+                                          color={bojeStatusa[por.status]}
+                                          size={30}
+                                        />
+                                      )}
+                                      {por.status == 2 && (
+                                        <SyncLoader
+                                          color={bojeStatusa[por.status]}
+                                          size={6}
+                                        />
+                                      )}
+                                      {por.status == 3 && (
+                                        <DotLoader
+                                          color={bojeStatusa[por.status]}
+                                          size={30}
+                                        />
+                                      )}
+                                    </>
                                   )}
                                 </>
                               )}
@@ -239,7 +247,9 @@ export default class Main extends Component {
                                     marginBottom: 0,
                                     color:
                                       bojeStatusa[
-                                        por.potvrdjena || por.odbijena
+                                        por.potvrdjena ||
+                                        por.odbijena ||
+                                        por.status == 7
                                           ? por.status
                                           : 0
                                       ],
@@ -247,7 +257,9 @@ export default class Main extends Component {
                                 >
                                   {
                                     statusi[
-                                      por.potvrdjena || por.odbijena
+                                      por.potvrdjena ||
+                                      por.odbijena ||
+                                      por.status == 7
                                         ? por.status
                                         : 0
                                     ]
@@ -282,8 +294,7 @@ export default class Main extends Component {
                     {this.state.partneri.map((p) => (
                       <Route path={"/" + p.naziv}>
                         <ProdavnicaWrapper
-                    dajPorudzbine={this.dajPorudzbine}
-
+                          dajPorudzbine={this.dajPorudzbine}
                           prikaziPorudzbinu={(por) => {
                             this.setState({ porudzbinaZaPrikaz: por }, () =>
                               refModalPrikaz.current.otvori()
@@ -342,22 +353,34 @@ export default class Main extends Component {
                         : require("img/default.jpg")
                     }
                   />
-                  {!por.potvrdjena && !por.odbijena && (
-                    <RingLoader color={bojeStatusa[0]} size={100} />
-                  )}
-                  {por.potvrdjena && !por.odbijena && (
+                  {por.status == 7 ? (
+                    <ClockLoader color={bojeStatusa[7]} size={100} />
+                  ) : (
                     <>
-                      {por.status == 1 && (
-                        <HashLoader
-                          color={bojeStatusa[por.status]}
-                          size={100}
-                        />
+                      {!por.potvrdjena && !por.odbijena && (
+                        <RingLoader color={bojeStatusa[0]} size={100} />
                       )}
-                      {por.status == 2 && (
-                        <SyncLoader color={bojeStatusa[por.status]} size={20} />
-                      )}
-                      {por.status == 3 && (
-                        <DotLoader color={bojeStatusa[por.status]} size={100} />
+                      {por.potvrdjena && !por.odbijena && (
+                        <>
+                          {por.status == 1 && (
+                            <HashLoader
+                              color={bojeStatusa[por.status]}
+                              size={100}
+                            />
+                          )}
+                          {por.status == 2 && (
+                            <SyncLoader
+                              color={bojeStatusa[por.status]}
+                              size={20}
+                            />
+                          )}
+                          {por.status == 3 && (
+                            <DotLoader
+                              color={bojeStatusa[por.status]}
+                              size={100}
+                            />
+                          )}
+                        </>
                       )}
                     </>
                   )}
@@ -377,11 +400,19 @@ export default class Main extends Component {
                       marginBottom: 15,
                       color:
                         bojeStatusa[
-                          por.potvrdjena || por.odbijena ? por.status : 0
+                          por.potvrdjena || por.odbijena || por.status == 7
+                            ? por.status
+                            : 0
                         ],
                     }}
                   >
-                    {statusi[por.potvrdjena || por.odbijena ? por.status : 0]}{" "}
+                    {
+                      statusi[
+                        por.potvrdjena || por.odbijena || por.status == 7
+                          ? por.status
+                          : 0
+                      ]
+                    }{" "}
                   </h6>
                   <Button
                     block

@@ -35,6 +35,12 @@ import Main from "./Main";
 import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/auth";
+import sr from 'date-fns/locale/sr-Latn';
+import { setDefaultLocale, registerLocale } from "react-datepicker";
+
+
+registerLocale('sr', sr)
+setDefaultLocale("sr");
 
 var firebaseConfig = {
   apiKey: "AIzaSyDpbrvx5fqGrLVFAW1APXi7UT3z9y95xdc",
