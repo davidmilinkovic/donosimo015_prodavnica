@@ -36,7 +36,10 @@ import firebase from "firebase/app";
 import "firebase/analytics";
 import "firebase/auth";
 import sr from 'date-fns/locale/sr-Latn';
-import { setDefaultLocale, registerLocale } from "react-datepicker";
+import {
+  setDefaultLocale,
+  registerLocale
+} from "react-datepicker";
 
 
 registerLocale('sr', sr)
@@ -58,24 +61,31 @@ firebase.initializeApp(firebaseConfig);
 firebase.auth().languageCode = 'rs';
 
 
-firebase.auth().onAuthStateChanged(() => {
-  if (firebase.auth().currentUser != null) {
-    firebase.auth().currentUser.getIdToken(true)
-      .then((idToken) => {
-        localStorage.setItem("token", idToken);
+var verzija = "1.1";
+if (localStorage.getItem("verzija") != verzija) {
+  localStorage.setItem("verzija", verzija);
+  window.location.reload();
+} else {
 
-      }).catch(() => {}).finally(() => {
-        ReactDOM.render( <
-          Main / > ,
-          document.getElementById("root")
-        );
-      })
-  } else {
-    localStorage.removeItem("token");
-    ReactDOM.render( <
-      Main / > ,
-      document.getElementById("root")
-    );
-  }
+  firebase.auth().onAuthStateChanged(() => {
+    if (firebase.auth().currentUser != null) {
+      firebase.auth().currentUser.getIdToken(true)
+        .then((idToken) => {
+          localStorage.setItem("token", idToken);
 
-});
+        }).catch(() => {}).finally(() => {
+          ReactDOM.render( <
+            Main / > ,
+            document.getElementById("root")
+          );
+        })
+    } else {
+      localStorage.removeItem("token");
+      ReactDOM.render( <
+        Main / > ,
+        document.getElementById("root")
+      );
+    }
+
+  });
+}

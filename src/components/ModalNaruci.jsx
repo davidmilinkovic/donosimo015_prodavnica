@@ -47,6 +47,7 @@ export default class ModalNaruci extends Component {
     zakazanaZaDatum: new Date(),
     zakazanaZa: new Date(),
     zakazanaAktiv: null,
+    modalPrerano: false
   };
 
   validacija = () => {
@@ -58,6 +59,7 @@ export default class ModalNaruci extends Component {
     var invalid = this.validacija();
     this.setState({ invalid });
     if (invalid) return;
+    this.setState({ progress: true });
     var body = {};
     body.ime = this.state.ime;
     body.adresa = this.state.adresa;
@@ -75,6 +77,7 @@ export default class ModalNaruci extends Component {
       0
     );
     myFetch("/novaPorudzbina", "POST", body).then((res) => {
+      this.setState({ progress: false });
       if (res.partnerNeaktivan) {
         this.setState({ modalPartnerNeaktivan: true });
       } else {
@@ -95,8 +98,12 @@ export default class ModalNaruci extends Component {
     var zakazanaAktiv = new Date(zakazanaZa);
     zakazanaAktiv.setMinutes(zakazanaAktiv.getMinutes() - 45);
 
-    alert(zakazanaZa);
-    alert(zakazanaAktiv);
+    if(zakazanaAktiv <= new Date()) {
+      this.setState({modalPrerano: true});
+      return;
+    }
+
+    this.setState({ progress: true });
 
     var body = {};
     body.ime = this.state.ime;
@@ -115,8 +122,9 @@ export default class ModalNaruci extends Component {
       0
     );
     body.zakazanaZa = zakazanaZa;
-    body.zakazanaAktiv = zakazanaAktiv
+    body.zakazanaAktiv = zakazanaAktiv;
     myFetch("/novaPorudzbina", "POST", body).then((res) => {
+      this.setState({ progress: false });
       if (res.partnerNeaktivan) {
         this.setState({ modalPartnerNeaktivan: true });
       } else {
@@ -161,6 +169,21 @@ export default class ModalNaruci extends Component {
             </Button>
           </ModalFooter>
         </Modal>
+        <Modal isOpen={this.state.modalPrerano} className="dmModal">
+          <ModalHeader>Greška</ModalHeader>
+          <ModalBody style={{ fontSize: 15, fontWeight: "normal" }}>
+            Porudžbina mora da se zakaže za vreme koje je bar 45 minuta od trenutnog vremena...
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              className="btn-round mb-0"
+              color="info"
+              onClick={() => this.setState({ modalPrerano: false })}
+            >
+              Zatvori
+            </Button>
+          </ModalFooter>
+        </Modal>
         <Modal isOpen={this.state.modalZakazi} className="dmModal">
           <ModalHeader>Zakazivanje porudžbine</ModalHeader>
           <ModalBody style={{ fontSize: 15, fontWeight: "normal" }}>
@@ -181,6 +204,7 @@ export default class ModalNaruci extends Component {
               wrapperClassName="block"
               className="block"
               dateFormat="dd.MM.yyyy"
+              
             />
             <p style={{ fontWeight: "normal", marginBottom: 5, marginTop: 10 }}>
               <i className="fas fa-clock mr-1 text-primary" />
@@ -208,6 +232,7 @@ export default class ModalNaruci extends Component {
             <Button
               className="btn-round mb-0"
               color="primary"
+              disabled={this.state.progress}
               onClick={() => {
                 this.setState({ modalZakazi: false });
                 this.zakazi();
@@ -509,6 +534,7 @@ export default class ModalNaruci extends Component {
                   color="primary"
                   className="btn-round"
                   onClick={this.naruci}
+                  disabled={this.state.progress}
                 >
                   <i className="fas fa-check mr-2" />
                   Naruči
@@ -525,6 +551,7 @@ export default class ModalNaruci extends Component {
                 block
                 className="btn-round"
                 onClick={this.naruci}
+                disabled={this.state.progress}
               >
                 <i className="fas fa-check mr-2" />
                 Naruči
