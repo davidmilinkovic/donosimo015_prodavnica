@@ -57,7 +57,7 @@ export default class Verifikacija extends Component {
       .auth()
       .signInWithCredential(credential)
       .then(() => {
-        window.location.reload();
+        window.location = "/"
       })
       .catch((err) => {
         this.setState({ alertGreska: true });

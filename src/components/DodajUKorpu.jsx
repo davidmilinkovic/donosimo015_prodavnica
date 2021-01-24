@@ -75,8 +75,8 @@ export default class DodajUKorpu extends Component {
       naziv: artikal.naziv,
       slika: artikal.slika,
     };
-    var korpa = [...(JSON.parse(localStorage.getItem("korpa")) || []), stavka];
-    localStorage.setItem("korpa", JSON.stringify(korpa));
+    var korpa = [...(JSON.parse(localStorage.getItem("korpa_" + this.props.partner.id)) || []), stavka];
+    localStorage.setItem("korpa_"+this.props.partner.id, JSON.stringify(korpa));
     this.props.korpaIzmenjena();
     this.props.toggle();
     this.setState(initialState);

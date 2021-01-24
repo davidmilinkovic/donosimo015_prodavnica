@@ -59,20 +59,26 @@ export default class Prodavnica extends Component {
     dodaci: [],
     mesta: [],
     modalNaruci: false,
-    telefon: "",
-    firebaseUID: "",
+    telefon: null,
+    firebaseUID: null,
     modalKategorije: false,
     progress: true,
   };
 
   componentDidMount() {
-    this.setState({ korpa: JSON.parse(localStorage.getItem("korpa")) || [] });
-    this.ucitaj();
-    var decoded = jwt_decode(localStorage.getItem("token"));
     this.setState({
-      telefon: decoded.phone_number,
-      firebaseUID: decoded.user_id,
+      korpa:
+        JSON.parse(localStorage.getItem("korpa_" + this.props.partner.id)) ||
+        [],
     });
+    this.ucitaj();
+    if (localStorage.getItem("token") != null) {
+      var decoded = jwt_decode(localStorage.getItem("token"));
+      this.setState({
+        telefon: decoded.phone_number,
+        firebaseUID: decoded.user_id,
+      });
+    }
   }
 
   ucitaj = () => {
@@ -105,7 +111,9 @@ export default class Prodavnica extends Component {
   };
 
   korpaIzmenjena = () => {
-    this.setState({ korpa: JSON.parse(localStorage.getItem("korpa")) });
+    this.setState({
+      korpa: JSON.parse(localStorage.getItem("korpa_" + this.props.partner.id)),
+    });
   };
 
   brisiStavkuIzKorpe = (index) => {
@@ -113,17 +121,23 @@ export default class Prodavnica extends Component {
     if (index >= 0 || index <= korpa.length) {
       korpa.splice(index, 1);
       if (korpa.length == 0) this.setState({ korpaOtvorena: false });
-      localStorage.setItem("korpa", JSON.stringify(korpa));
+      localStorage.setItem(
+        "korpa_" + this.props.partner.id,
+        JSON.stringify(korpa)
+      );
       this.setState({ korpa });
     }
   };
 
   naruci = () => {
-    this.setState({ korpaOtvorena: false, modalNaruci: true });
+    if(this.state.firebaseUID)
+      this.setState({ korpaOtvorena: false, modalNaruci: true });
+    else
+      window.location = "/obavestenje"
   };
 
   isprazniKorpu = () => {
-    localStorage.setItem("korpa", "[]");
+    localStorage.setItem("korpa_" + this.props.partner.id, "[]");
     this.setState({ korpa: [] });
   };
 
@@ -144,6 +158,7 @@ export default class Prodavnica extends Component {
       <>
         <Loader loading={this.state.progress} />
         <DodajUKorpu
+          partner={this.props.partner}
           otvoren={this.state.modalKorpa}
           artikal={this.state.artikalKorpa}
           toggle={this.toggleModalKorpa}

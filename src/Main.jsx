@@ -168,151 +168,151 @@ export default class Main extends Component {
               Odjava
             </Button>
           </div>
-          {localStorage.getItem("landing") != null ? (
-            firebase.auth().currentUser != null ? (
-              <>
-                {this.state.porudzbine.length > 0 && (
-                  <MediaQuery maxWidth={1224}>
-                    <div
-                      style={{
-                        boxShadow: "rgba(0, 0, 0, 0.157) 0px 6px 5px",
-                        backgroundColor: "#e3e3e3",
-                        position: "sticky",
-                        top: 55,
-                        zIndex: 55,
-                      }}
-                    >
-                      {this.state.porudzbine.map((por) => (
-                        <>
+          {
+            <>
+              {this.state.porudzbine.length > 0 && (
+                <MediaQuery maxWidth={1224}>
+                  <div
+                    style={{
+                      boxShadow: "rgba(0, 0, 0, 0.157) 0px 6px 5px",
+                      backgroundColor: "#e3e3e3",
+                      position: "sticky",
+                      top: 55,
+                      zIndex: 55,
+                    }}
+                  >
+                    {this.state.porudzbine.map((por) => (
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            borderBottom: "1px solid #d5d5d5",
+                            alignItems: "center",
+                            padding: 10,
+                            justifyContent: "space-between",
+                          }}
+                        >
                           <div
-                            style={{
-                              display: "flex",
-                              borderBottom: "1px solid #d5d5d5",
-                              alignItems: "center",
-                              padding: 10,
-                              justifyContent: "space-between",
-                            }}
+                            style={{ display: "flex", alignItems: "center" }}
                           >
-                            <div
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              {por.status == 7 ? (
-                                <ClockLoader color={bojeStatusa[7]} size={30} />
-                              ) : (
-                                <>
-                                  {!por.potvrdjena && !por.odbijena && (
-                                    <RingLoader
-                                      color={bojeStatusa[0]}
-                                      size={30}
-                                    />
-                                  )}
-                                  {por.potvrdjena && !por.odbijena && (
-                                    <>
-                                      {por.status == 1 && (
-                                        <HashLoader
-                                          color={bojeStatusa[por.status]}
-                                          size={30}
-                                        />
-                                      )}
-                                      {por.status == 2 && (
-                                        <SyncLoader
-                                          color={bojeStatusa[por.status]}
-                                          size={6}
-                                        />
-                                      )}
-                                      {por.status == 3 && (
-                                        <DotLoader
-                                          color={bojeStatusa[por.status]}
-                                          size={30}
-                                        />
-                                      )}
-                                    </>
-                                  )}
-                                </>
-                              )}
-                              <div style={{ paddingLeft: 10 }}>
-                                <h5
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 15,
-                                    fontWeight: "normal",
-                                  }}
-                                >
-                                  Porudžbina iz <b>{por.partnerString}</b>
-                                </h5>
-                                <p
-                                  style={{
-                                    fontWeight: "bold",
-                                    fontSize: 12,
-                                    marginBottom: 0,
-                                    color:
-                                      bojeStatusa[
-                                        por.potvrdjena ||
-                                        por.odbijena ||
-                                        por.status == 7
-                                          ? por.status
-                                          : 0
-                                      ],
-                                  }}
-                                >
-                                  {
-                                    statusi[
+                            {por.status == 7 ? (
+                              <ClockLoader color={bojeStatusa[7]} size={30} />
+                            ) : (
+                              <>
+                                {!por.potvrdjena && !por.odbijena && (
+                                  <RingLoader
+                                    color={bojeStatusa[0]}
+                                    size={30}
+                                  />
+                                )}
+                                {por.potvrdjena && !por.odbijena && (
+                                  <>
+                                    {por.status == 1 && (
+                                      <HashLoader
+                                        color={bojeStatusa[por.status]}
+                                        size={30}
+                                      />
+                                    )}
+                                    {por.status == 2 && (
+                                      <SyncLoader
+                                        color={bojeStatusa[por.status]}
+                                        size={6}
+                                      />
+                                    )}
+                                    {por.status == 3 && (
+                                      <DotLoader
+                                        color={bojeStatusa[por.status]}
+                                        size={30}
+                                      />
+                                    )}
+                                  </>
+                                )}
+                              </>
+                            )}
+                            <div style={{ paddingLeft: 10 }}>
+                              <h5
+                                style={{
+                                  marginBottom: 0,
+                                  fontSize: 15,
+                                  fontWeight: "normal",
+                                }}
+                              >
+                                Porudžbina iz <b>{por.partnerString}</b>
+                              </h5>
+                              <p
+                                style={{
+                                  fontWeight: "bold",
+                                  fontSize: 12,
+                                  marginBottom: 0,
+                                  color:
+                                    bojeStatusa[
                                       por.potvrdjena ||
                                       por.odbijena ||
                                       por.status == 7
                                         ? por.status
                                         : 0
-                                    ]
-                                  }
-                                </p>
-                              </div>
+                                    ],
+                                }}
+                              >
+                                {
+                                  statusi[
+                                    por.potvrdjena ||
+                                    por.odbijena ||
+                                    por.status == 7
+                                      ? por.status
+                                      : 0
+                                  ]
+                                }
+                              </p>
                             </div>
-                            <Button
-                              style={{
-                                marginBottom: 0,
-                                fontSize: 12,
-                              }}
-                              color="info"
-                              size="sm"
-                              className="btn-round"
-                              onClick={() => this.prikaziPorudzbinu(por)}
-                            >
-                              <i className="fas fa-list mr-1  text-primary" />
-                              Prikaži
-                            </Button>
                           </div>
-                        </>
-                      ))}
-                    </div>
-                  </MediaQuery>
-                )}
-                <div>
-                  <Switch>
-                    <Route path="/" exact>
-                      <Pocetna hist={hist} partneri={this.state.partneri} />
-                    </Route>
-                    {this.state.partneri.map((p) => (
-                      <Route path={"/" + p.naziv}>
-                        <ProdavnicaWrapper
-                          dajPorudzbine={this.dajPorudzbine}
-                          prikaziPorudzbinu={(por) => {
-                            this.setState({ porudzbinaZaPrikaz: por }, () =>
-                              refModalPrikaz.current.otvori()
-                            );
-                          }}
-                          partner={p}
-                        />
-                      </Route>
+                          <Button
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 12,
+                            }}
+                            color="info"
+                            size="sm"
+                            className="btn-round"
+                            onClick={() => this.prikaziPorudzbinu(por)}
+                          >
+                            <i className="fas fa-list mr-1  text-primary" />
+                            Prikaži
+                          </Button>
+                        </div>
+                      </>
                     ))}
-                  </Switch>
-                </div>
-              </>
-            ) : (
-              <Verifikacija />
-            )
-          ) : (
-            <Landing />
-          )}
+                  </div>
+                </MediaQuery>
+              )}
+              <div>
+                <Switch>
+                  <Route path="/verifikacija" exact>
+                    <Verifikacija />
+                  </Route>
+                  <Route path="/obavestenje" exact>
+                    <Landing />
+                  </Route>
+                  <Route path="/" exact>
+                    <Pocetna hist={hist} partneri={this.state.partneri} />
+                  </Route>
+                  {this.state.partneri.map((p) => (
+                    <Route path={"/" + p.naziv}>
+                      <ProdavnicaWrapper
+                        dajPorudzbine={this.dajPorudzbine}
+                        prikaziPorudzbinu={(por) => {
+                          this.setState({ porudzbinaZaPrikaz: por }, () =>
+                            refModalPrikaz.current.otvori()
+                          );
+                        }}
+                        partner={p}
+                      />
+                    </Route>
+                  ))}
+                </Switch>
+              </div>
+            </>
+          }
         </Router>
 
         <MediaQuery minWidth={1224}>

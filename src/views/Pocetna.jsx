@@ -5,6 +5,7 @@ import Button from "reactstrap/lib/Button";
 import Card from "reactstrap/lib/Card";
 import CardBody from "reactstrap/lib/CardBody";
 import CardColumns from "reactstrap/lib/CardColumns";
+import CardFooter from "reactstrap/lib/CardFooter";
 import CardImg from "reactstrap/lib/CardImg";
 import CardSubtitle from "reactstrap/lib/CardSubtitle";
 import CardText from "reactstrap/lib/CardText";
@@ -48,15 +49,16 @@ export default class Pocetna extends Component {
               Naši partneri
             </h4>
           </div>{" "}
-          <CardColumns style={{ paddingTop: 25 }}>
+          <div style={{ paddingTop: 25, display: "flex", flexWrap: "wrap", alignItems: "stretch" }}>
             {this.props.partneri.map((partner) => (
-              <Card style={{backgroundColor: "#e3e3e3"}}>
-                <CardBody>
+              <Card style={{backgroundColor: "#e3e3e3", flex: "1 0 300px", margin: 10}}>
+                <CardBody style={{paddingBottom: 10}}>
                   <div
                     style={{
                       display: "grid",
                       gridTemplateColumns: "auto 1fr",
                       columnGap: "10px",
+                      
                     }}
                   >
                     {partner.slika && partner.slika != "" && (
@@ -88,21 +90,32 @@ export default class Pocetna extends Component {
                       </CardSubtitle>
                       <CardText>{partner.opis}</CardText>
                     </div>
-                  </div>
-                  <Link to={"/" + partner.naziv}>
+                  </div>                 
+                </CardBody>                
+                <CardFooter style={{padding: 10, borderTop: "1px solid #ccc"}}>
+                <Link to={"/" + partner.naziv}>
                     <Button
                       disabled={!partner.aktivan}
                       block
-                      className="mt-3 btn-round"
+                      className="btn-round"
                       color="info"
                     >
                       <i className="fas fa-shopping-cart text-primary mr-2" /> Naruči
                     </Button>
                   </Link>
-                </CardBody>
+                </CardFooter>
               </Card>
+              
             ))}
-          </CardColumns>
+            <>
+                        <div className="partneriFlexHidden" />
+                        <div className="partneriFlexHidden" />
+                        <div className="partneriFlexHidden" />
+                        <div className="partneriFlexHidden" />
+                        <div className="partneriFlexHidden" />
+                        <div className="partneriFlexHidden" />
+                      </>
+          </div>
         </Container>
       </div>
     );
