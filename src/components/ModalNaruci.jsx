@@ -214,6 +214,8 @@ export default class ModalNaruci extends Component {
               selected={this.state.zakazanaZa}
               showTimeSelectOnly
               showTimeSelect
+              timeIntervals="5"
+              timeCaption="Vreme"
               wrapperClassName="block"
               className="block"
               customInput={<CustomInput color="info" />}
@@ -288,7 +290,7 @@ export default class ModalNaruci extends Component {
                 marginTop: 0,
                 marginBottom: 15,
                 fontWeight: "normal",
-                fontSize: 18,
+                fontSize: 16,
               }}
             >
               Unesite podatke za dostavu
@@ -373,7 +375,36 @@ export default class ModalNaruci extends Component {
                 </Col>
               </Row>
             </Form>
-
+            <div style={{  flexGrow: 1, width: "100%" }}>
+              <p style={{ fontSize: 18, fontWeight: "normal" }}>
+                Cena porudžbine:{" "}
+                <span className="bold text-primary">
+                  {this.props.korpa.reduce((prev, cur) => prev + cur.cena, 0)}{" "}
+                  din.
+                </span>
+              </p>
+              {this.state.mesto != null && (
+                <>
+                  <p style={{ fontSize: 18, fontWeight: "normal" }}>
+                    Cena dostave:{" "}
+                    <span className="bold text-primary">
+                      {this.state.mesto.Zona.cena} din.
+                    </span>
+                  </p>
+                  <p style={{ fontSize: 18, fontWeight: "bold" }}>
+                    Ukupno:{" "}
+                    <span className="bold text-primary">
+                      {this.props.korpa.reduce(
+                        (prev, cur) => prev + cur.cena,
+                        0
+                      ) + this.state.mesto.Zona.cena}{" "}
+                      din.
+                    </span>
+                  </p>
+                </>
+              )}
+            </div>
+            <hr/>
             <Card style={{ backgroundColor: "#e3e3e3" }}>
               <CardHeader>
                 <h3
@@ -458,35 +489,7 @@ export default class ModalNaruci extends Component {
               alignItems: "flex-end",
             }}
           >
-            <div style={{ paddingLeft: 10, flexGrow: 1, width: "100%" }}>
-              <p style={{ fontSize: 18, fontWeight: "normal" }}>
-                Cena porudžbine:{" "}
-                <span className="bold text-primary">
-                  {this.props.korpa.reduce((prev, cur) => prev + cur.cena, 0)}{" "}
-                  din.
-                </span>
-              </p>
-              {this.state.mesto != null && (
-                <>
-                  <p style={{ fontSize: 18, fontWeight: "normal" }}>
-                    Cena dostave:{" "}
-                    <span className="bold text-primary">
-                      {this.state.mesto.Zona.cena} din.
-                    </span>
-                  </p>
-                  <p style={{ fontSize: 18, fontWeight: "bold" }}>
-                    Ukupno:{" "}
-                    <span className="bold text-primary">
-                      {this.props.korpa.reduce(
-                        (prev, cur) => prev + cur.cena,
-                        0
-                      ) + this.state.mesto.Zona.cena}{" "}
-                      din.
-                    </span>
-                  </p>
-                </>
-              )}
-            </div>
+            
             <div
               style={{
                 display: "flex",
@@ -501,6 +504,7 @@ export default class ModalNaruci extends Component {
                   flexGrow: mobilni ? 1 : 0,
                 }}
                 color="info"
+                size={mobilni ? "sm" : ""}
                 className="btn-round"
                 onClick={this.props.toggle}
               >
@@ -514,6 +518,7 @@ export default class ModalNaruci extends Component {
                 }}
                 color="success"
                 className="btn-round"
+                size={mobilni ? "sm" : ""}
                 onClick={this.props.toggle}
                 onClick={() => {
                   var invalid = this.validacija();
@@ -533,6 +538,7 @@ export default class ModalNaruci extends Component {
                   }}
                   color="primary"
                   className="btn-round"
+                  size={mobilni ? "sm" : ""}
                   onClick={this.naruci}
                   disabled={this.state.progress}
                 >
@@ -549,6 +555,7 @@ export default class ModalNaruci extends Component {
                 }}
                 color="primary"
                 block
+                size={mobilni ? "sm" : ""}
                 className="btn-round"
                 onClick={this.naruci}
                 disabled={this.state.progress}

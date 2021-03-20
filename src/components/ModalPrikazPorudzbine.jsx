@@ -86,7 +86,7 @@ export default class ModalPrikazPorudzbine extends Component {
                         <span>
                           Datum i vreme zakazivanja:{" "}
                           <b>
-                            <Moment format="DD.MM.YYYY. hh:mm">
+                            <Moment format="DD.MM.YYYY. HH:mm">
                               {por.zakazanaZa}
                             </Moment>
                           </b>
